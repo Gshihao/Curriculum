@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        td {
+            border: 1px solid black;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- <button onclick="getfu()">132</button> -->
+    <table class="table">
+        <tr>
+            <td>星期一</td>
+            <td>星期二</td>
+            <td>星期三</td>
+            <td>星期四</td>
+            <td>星期五</td>
+            <td>星期六</td>
+            <td>星期天</td>
+        </tr>
+    </table>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!-- <script src="./ax.js"></script> -->
+    <script>
+        const tab = document.querySelector(".table");
+        axios({
+            url: 'http://localhost:3038/getkcb?username=202105010005&password=gsh6857810',
+            method: 'POST',
+        }).then(result => {
+            let xuanran = new Array(8);
+            let ic = 0; // 第几届
+            for (let i = 0; i < xuanran.length; i++) {
+                xuanran[i] = new Array(7);
+            }
+            // console.log(result.data);
+            // 循环
+            // console.log(result.data[23].xingqi);
+            result.data.forEach((element, index) => {
+                // 判断是否切换下一行
+                // index + 1 <= result.data.length - 1 &&
+                // console.log(index !== 0 && result.data[index - 1].xingqi > element.xingqi);
+                console.log(result.data[20]);
+                if (index !== 0 && result.data[index - 1].xingqi >= element.xingqi) {
+                    ic++;
+                }
+                // console.log(element, index);
+                xuanran[ic][element.xingqi - 1] = element
+            });
+            // console.log(xuanran);
+            let ruttab = ''
+            for (let a = 0; a < xuanran.length; a++) {
+                ruttab += `<tr>`
+                for (let b = 0; b < xuanran[a].length; b++) {
+                    // 合并两节课合上
+                    let ifhs = true
+                    // 排除第一排
+                    if (a != 0 && xuanran[a][b]) {
+                        try {
+                            if ( xuanran[a][b].id == xuanran[a-1][b].id ) {
+                            //     ifhs = false
+                            //     // xuanran[a-1][b] = undefined
+                            //     console.log(a);
+                            //   document.querySelectorAll(`.table tr:nth-child(${a+1})`).forEach(item=>{
+                            //     item.removeChild()
+                            //   })
+                            }
+                        } catch (error) {
+
+                        }
+                        //  排除第一排，和没课
+                        // if (xuanran[a][b] != undefined ||(xuanran[a][b].id == xuanran[a+1][b].id || xuanran[a][b].id == xuanran[a+1][b].id) ){
+                        //     console.log(2);
+                        // }
+                    }
+                    // if(a != 0 &&  xuanran[a][b] && (xuanran[a][b].id == xuanran[a+1][b].id || xuanran[a][b].id == xuanran[a+1][b].id)){
+                    //     ifhs = false
+                    // }
+
+                    ruttab += `<td rowspan="${ifhs ? 1 : 2}">${xuanran[a][b] ? xuanran[a][b].jxbmc : '没课'}</td>`
+                }
+                ruttab += `</tr>`
+            }
+            tab.innerHTML += ruttab
+        })
+    </script>
+</body>
+
+</html>
