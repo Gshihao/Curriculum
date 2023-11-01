@@ -39,14 +39,8 @@
             for (let i = 0; i < xuanran.length; i++) {
                 xuanran[i] = new Array(7);
             }
-            // console.log(result.data);
-            // 循环
-            // console.log(result.data[23].xingqi);
             result.data.forEach((element, index) => {
                 // 判断是否切换下一行
-                // index + 1 <= result.data.length - 1 &&
-                // console.log(index !== 0 && result.data[index - 1].xingqi > element.xingqi);
-                console.log(result.data[20]);
                 if (index !== 0 && result.data[index - 1].xingqi >= element.xingqi) {
                     ic++;
                 }
@@ -55,21 +49,21 @@
             });
             // console.log(xuanran);
             let ruttab = ''
+            let sum;
             for (let a = 0; a < xuanran.length; a++) {
                 ruttab += `<tr>`
+                    sum = 0;
                 for (let b = 0; b < xuanran[a].length; b++) {
                     // 合并两节课合上
                     let ifhs = true
-                    // 排除第一排
-                    if (a != 0 && xuanran[a][b]) {
+                    // 排除最后一排
+                    if (a <  xuanran[a].length&& xuanran[a][b]) {
                         try {
-                            if ( xuanran[a][b].id == xuanran[a-1][b].id ) {
-                            //     ifhs = false
-                            //     // xuanran[a-1][b] = undefined
-                            //     console.log(a);
-                            //   document.querySelectorAll(`.table tr:nth-child(${a+1})`).forEach(item=>{
-                            //     item.removeChild()
-                            //   })
+                            if ( xuanran[a][b].id == xuanran[a+1][b].id ) {
+                                // ifhs = false
+
+                                // xuanran[a+1].splice(b-sum,1)
+                                // b=b-1
                             }
                         } catch (error) {
 
@@ -83,11 +77,12 @@
                     //     ifhs = false
                     // }
 
-                    ruttab += `<td rowspan="${ifhs ? 1 : 2}">${xuanran[a][b] ? xuanran[a][b].jxbmc : '没课'}</td>`
+                    ruttab += `<td rowspan="${ifhs ? 1 : 2}">${xuanran[a][b] ? xuanran[a][b].jxbmc : ''}</td>`
                 }
                 ruttab += `</tr>`
             }
             tab.innerHTML += ruttab
+            console.log(xuanran);
         })
     </script>
 </body>
