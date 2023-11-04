@@ -41,8 +41,13 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <!-- <script src="./ax.js"></script> -->
     <script>
+        // 获取 url
+        let hee = location.href.split("?")[1]
+        let username = hee.split("&")[0].split("=")[1]
+        let password = hee.split("&")[1].split("=")[1]
+        const tab = document.querySelector(".table");
         axios({
-            url: 'http://localhost:3038/getkcb?username=202105010005&password=gsh6857810',
+            url: 'http://localhost:3038/getkcb?username='+username+'&password='+password,
             method: 'POST',
         }).then(result => {
             let xuanran = new Array(8);
