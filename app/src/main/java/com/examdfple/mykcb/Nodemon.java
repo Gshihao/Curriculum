@@ -3,8 +3,15 @@ package com.examdfple.mykcb;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
 
-public class Mydemo_one extends AppWidgetProvider {
+public class Nodemon extends AppWidgetProvider {
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        super.onReceive(context, intent);
+    }
+
     @Override
     public void onEnabled(Context context) {
         super.onEnabled(context);
@@ -13,6 +20,7 @@ public class Mydemo_one extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         super.onUpdate(context, appWidgetManager, appWidgetIds);
+        Log.d("???","456");
     }
 
     @Override
