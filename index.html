@@ -47,7 +47,7 @@
         let password = hee.split("&")[1].split("=")[1]
         const tab = document.querySelector(".table");
         axios({
-            url: 'http://localhost:3038/getkcb?username='+username+'&password='+password,
+            url: 'http://shaotools.com:3038/getkcb?username='+username+'&password='+password,
             method: 'POST',
         }).then(result => {
             let xuanran = new Array(8);
