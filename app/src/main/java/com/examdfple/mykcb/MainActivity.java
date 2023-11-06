@@ -6,16 +6,25 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+
+
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
     public SharedPreferences sharedPreferences;
@@ -67,27 +76,9 @@ public class MainActivity extends AppCompatActivity {
         editor.putString("password", password.getText().toString());
         editor.commit();
         new Thread(() -> {
-            OkHttpClient client = new OkHttpClient();
-            String json = "{\"username\": \""+username.getText().toString()+"\", \"password\": "+password.getText().toString()+"}";
-            RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json);
-            Request request = new Request.Builder()
-                    .url("http://localhost:3038/getkcb")
-                    .post(requestBody)
-                    .build();
-            try {
-                Response response = client.newCall(request).execute();
-                if (response.isSuccessful()) {
-                    String responseBody = response.body().string();
-                    // 处理响应内容
-//                        Toast.makeText(this, responseBody, Toast.LENGTH_SHORT).show();
-//                    System.out.println("Response: " + responseBody);
-                } else {
-                    // 处理请求失败的情况
-                    System.out.println("Request failed with code: " + response.code());
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            String url = "http://shaotools.com:3038/getkcb";
+            String params = "username=202105010005&password=gsh6857810";
+//      里面放验证逻辑
         }).start();
         // 检查是否已获得网络权限
         this.finish();
