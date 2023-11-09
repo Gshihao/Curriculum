@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -19,12 +21,16 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -50,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
     private AlertDialog.Builder dialog;
     private JSONObject oub;
     private final MediaType MEDIA_TYPE = MediaType.parse("application/json; charset=utf-8");
-
+    private final String DATASRC = "datam.json";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,6 +68,12 @@ public class MainActivity extends AppCompatActivity {
         StrictMode.setThreadPolicy(policy);//这两句设置禁止所有检查
         setValue();
 
+//        setFile setf2 = new setFile(this);
+//        try {
+//            Log.d("dat",setf2.read(DATASRC));
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
     }
 
     /**
@@ -130,6 +142,22 @@ public class MainActivity extends AppCompatActivity {
                     String responseBody = new String(byteArray, StandardCharsets.UTF_8);
                     // 处理返回的结果 Object Array
                     JSONArray retudat = new JSONArray(responseBody);
+
+                    // 登录成功，保存数据
+                    setFile setf1 = new setFile(this);
+                    setf1.write(DATASRC,responseBody);
+
+                    // 刷新 界面 widget
+
+                    AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(MainActivity.this);
+                    ComponentName thisAppWidget = new ComponentName(MainActivity.this, Nodemon.class);
+//                    AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
+                    int[] allAppWidgetsIds = appWidgetManager.getAppWidgetIds(thisAppWidget);
+                    Log.d("allAppWidgetsIds", Arrays.toString(allAppWidgetsIds));
+                    widgetSetOv wid = new widgetSetOv();
+                    wid.setshowlayout(MainActivity.this,allAppWidgetsIds,appWidgetManager);
+
+
                     startActivity(new Intent(this, MainKcb.class));
                 } else if (response.code() == 400) {
                     // 关闭加载框
@@ -182,6 +210,3 @@ public class MainActivity extends AppCompatActivity {
     }
 }
 //文件操作
-class setFile{
-
-}
