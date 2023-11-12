@@ -28,6 +28,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+         <!-- 首页       -->
+        <activity android:name=".MainHome_My"
+            android:label="主页"
+            android:exported="true">
+        </activity>
         <!--课程表-->
         <activity android:name=".MainKcb"
             android:label="课程表"

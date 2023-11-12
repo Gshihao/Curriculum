@@ -158,7 +158,8 @@ public class MainActivity extends AppCompatActivity {
                     wid.setshowlayout(MainActivity.this,allAppWidgetsIds,appWidgetManager);
 
 
-                    startActivity(new Intent(this, MainKcb.class));
+                    startActivity(new Intent(this, MainHome_My.class));  // 跳转到首页
+                    this.finish();
                 } else if (response.code() == 400) {
                     // 关闭加载框
                     viewasds.dismiss();
