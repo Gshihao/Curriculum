@@ -68,12 +68,6 @@ public class MainActivity extends AppCompatActivity {
         StrictMode.setThreadPolicy(policy);//这两句设置禁止所有检查
         setValue();
 
-//        setFile setf2 = new setFile(this);
-//        try {
-//            Log.d("dat",setf2.read(DATASRC));
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
     }
 
     /**

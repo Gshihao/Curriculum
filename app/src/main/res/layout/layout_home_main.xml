@@ -6,11 +6,12 @@
     android:layout_width="match_parent"
 
 >
+
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_margin="10dp">
+        android:layout_margin="10dp"
+        android:orientation="vertical">
         <!--   放公告-->
         <LinearLayout
             android:layout_width="wrap_content"
@@ -25,12 +26,12 @@
             android:gravity="center">
 
             <ImageView
+                android:id="@+id/sddsfsdfssfd"
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
                 android:layout_gravity="center"
-                android:src="@mipmap/ic_launchermy"
-                android:id="@+id/sddsfsdfssfd"
-                android:background="#fff"/>
+                android:background="#fff"
+                android:src="@mipmap/ic_launchermy" />
         </LinearLayout>
         <!--     功区-->
         <LinearLayout
@@ -41,69 +42,77 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="80dp"
-                android:gravity="center"
-                android:orientation="vertical"
                 android:layout_weight="1.0"
-                android:onClick="Tiaozhuan">
+                android:gravity="center"
+                android:onClick="Tiaozhuan"
+                android:orientation="vertical">
+
                 <ImageView
                     android:layout_width="35dp"
                     android:layout_height="35dp"
-                    android:src="@mipmap/kecheng"/>
+                    android:src="@mipmap/kecheng" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="课程表"/>
+                    android:text="课程表" />
+            </LinearLayout>
+            <!-- 帮助 -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="80dp"
+                android:layout_weight="1.0"
+                android:gravity="center"
+                android:onClick="Help"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:src="@mipmap/help" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="帮助" />
             </LinearLayout>
             <!-- 课程表 -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="80dp"
-                android:gravity="center"
-                android:orientation="vertical"
                 android:layout_weight="1.0"
-                android:onClick="Tiaozhuan">
+                android:gravity="center"
+                android:onClick="Tiaozhuan"
+                android:orientation="vertical">
+
                 <ImageView
                     android:layout_width="35dp"
                     android:layout_height="35dp"
-                    android:src="@mipmap/kecheng"/>
+                    android:src="@mipmap/kecheng" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="课程表"/>
+                    android:text="课程表" />
             </LinearLayout>
             <!-- 课程表 -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="80dp"
-                android:gravity="center"
-                android:orientation="vertical"
                 android:layout_weight="1.0"
-                android:onClick="Tiaozhuan">
+                android:gravity="center"
+                android:onClick="Tiaozhuan"
+                android:orientation="vertical">
+
                 <ImageView
                     android:layout_width="35dp"
                     android:layout_height="35dp"
-                    android:src="@mipmap/kecheng"/>
+                    android:src="@mipmap/kecheng" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="课程表"/>
-            </LinearLayout>
-            <!-- 课程表 -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="80dp"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:layout_weight="1.0"
-                android:onClick="Tiaozhuan">
-                <ImageView
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
-                    android:src="@mipmap/kecheng"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="课程表"/>
+                    android:text="课程表" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
