@@ -6,21 +6,26 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.graphics.drawable.DrawableCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.RecyclerView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
@@ -28,20 +33,40 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class MainHome_My extends MainActivity{
-    public ImageView imgs;
+    public ImageView imgs,darwimg;
     private final String ASKKey = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhcHBJZCI6ODgzODczNzM2MjQ0Njc4NjU2LCJnZXRNYW5hZ2VtZW50SWQiOjcyNDU2MzA5MzU4Nzg0MTAyNCwiVElNRSI6MTY5OTg0MzUzMDU0Nn0.JgTbBUCkLwa7Iy5SD-7-me-buLgky92JNk0Bb_cwcPw";
     @Override
-    @SuppressLint({"MissingInflatedId", "LocalSuppress"})
+    @SuppressLint({"MissingInflatedId", "LocalSuppress", "WrongViewCast"})
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_home_main);
         imgs = findViewById(R.id.sddsfsdfssfd);
+        darwimg = findViewById(R.id.brawimgbanner);
         setImg();
         announcement();
 
+
+        // 设置标题栏
+        Toolbar todl = findViewById(R.id.toolbar);
+        todl.setTitleTextColor(getColor(R.color.white));
+        todl.setTitle("首页");
+        todl.setNavigationIcon(R.drawable.toolcaricon);
+        DrawerLayout draw= findViewById(R.id.sdds);
+        DrawableCompat.setTint(Objects.requireNonNull(todl.getNavigationIcon()), Color.WHITE); // 设置透明背景色
+        setSupportActionBar(todl); // 要写在监听器 前面
+        todl.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                draw.openDrawer(GravityCompat.START);
+                // start 为 左  end 为 右
+            }
+        });
+        // 侧滑栏
+        drawstructure();
+
     }
     /**
-     *
+     * @apiNote 设置广告图
      * */
     public void setImg(){
         new Thread(()->{
@@ -67,6 +92,7 @@ public class MainHome_My extends MainActivity{
                         public void run() {
                             // 在这里修改 UI
                             imgs.setImageBitmap(bitmap1);
+                            darwimg.setImageBitmap(bitmap1);
                         }
                     });
 
@@ -130,5 +156,9 @@ public class MainHome_My extends MainActivity{
         String url = "https://note.youdao.com/s/7kAPAX2w";
         intent.setData(Uri.parse(url));
         startActivity(intent);
+    }
+    public void drawstructure(){
+
+
     }
 }

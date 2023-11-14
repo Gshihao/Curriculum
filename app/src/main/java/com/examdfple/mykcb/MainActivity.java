@@ -1,6 +1,7 @@
 package com.examdfple.mykcb;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -57,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
     private JSONObject oub;
     private final MediaType MEDIA_TYPE = MediaType.parse("application/json; charset=utf-8");
     private final String DATASRC = "datam.json";
+    @SuppressLint("ResourceAsColor")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,6 +70,10 @@ public class MainActivity extends AppCompatActivity {
         StrictMode.setThreadPolicy(policy);//这两句设置禁止所有检查
         setValue();
 
+        Toolbar todl = findViewById(R.id.toolbar);
+        todl.setTitleTextColor(getColor(R.color.white));
+        todl.setTitle("登录");
+        setSupportActionBar(todl);
     }
 
     /**
