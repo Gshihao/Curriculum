@@ -2,39 +2,43 @@ package com.examdfple.mykcb;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.AnimationDrawable;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.FileUtils;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.StrictMode;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.RemoteViews;
 import android.widget.Toast;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.FileInputStream;
+import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
+import java.security.KeyStore;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.MediaType;
@@ -44,13 +48,14 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
 
 public class MainActivity extends AppCompatActivity {
+    private static final int REQUEST_CODE = 1005;
     public SharedPreferences sharedPreferences;
     public EditText username;
     public EditText password;
@@ -58,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
     private JSONObject oub;
     private final MediaType MEDIA_TYPE = MediaType.parse("application/json; charset=utf-8");
     private final String DATASRC = "datam.json";
+
     @SuppressLint("ResourceAsColor")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,8 +80,182 @@ public class MainActivity extends AppCompatActivity {
         todl.setTitleTextColor(getColor(R.color.white));
         todl.setTitle("登录");
         setSupportActionBar(todl);
+
+        // 判断是否更新
+        Determine_whether_toupdate(MainActivity.this);
     }
 
+    private void Determine_whether_toupdate(Context content) {
+        PotatoApi poapi = new PotatoApi(content);
+        JSONObject jsreq = poapi.ifupdate();
+        Log.d("更新", jsreq + "");
+        AlertDialog.Builder myerro = new AlertDialog.Builder(content);
+        try {
+            if (jsreq.get("ifreq").equals(true)) {
+                // 请求成功时 判断是否更新
+                if (jsreq.get("isUpdate").equals(true)) {
+                    // 需要更新时
+                    myerro.setTitle("有新版本") // 设置标题
+                            .setMessage(jsreq.get("versionStr").toString())
+                            .setPositiveButton("更新", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // 因条件需要，自行更新
+
+                                    try {
+                                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                                        String url = null;
+                                        url = jsreq.get("updateUrl").toString();
+                                        intent.setData(Uri.parse(url));
+                                        content.startActivity(intent);
+                                    } catch (JSONException e) {
+                                        throw new RuntimeException(e);
+                                    }
+
+                                    // 执行下载
+//                                    Download_Apk_file(jsreq);
+
+                                }
+                            }).setCancelable(false);
+                    if (!jsreq.get("updateState").equals(1)) {
+                        //  强制更新
+                        myerro.setNegativeButton("下次再说", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // 下载文件
+                            }
+                        });
+                    }
+                    myerro.create()
+                            .show();
+                }
+            } else if(jsreq.get("msg").equals("已经是最新版")){
+                // 最新版
+//                Toast.makeText(this, "已经是最新版", Toast.LENGTH_SHORT).show();
+            }else {
+                Toast.makeText(content, "用户版本获取失败", Toast.LENGTH_SHORT).show();
+            }
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void Download_Apk_file(JSONObject jsob) {
+        AlertDialog myerrs = new AlertDialog.Builder(MainActivity.this)
+                .setTitle("下载中")
+                .setView(R.layout.downdole_demo_day_one)
+                .setCancelable(false)
+                .create();
+        new Thread(() -> {
+            //                Environment.getExternalStorageDirectory() + "/download/
+            //跳转到开启apk安装权限开启的界面，让用户手动打开
+
+            String mUrl = null;
+            String mOutputPath = null;
+            try {
+                mUrl = jsob.get("updateUrl").toString();
+                // this.getFilesDir()
+                mOutputPath = "STools.apk";
+//                Environment.getExternalStorageDirectory() + "/download/
+            } catch (JSONException e) {
+                Log.d("获取路径失败", e.toString());
+                throw new RuntimeException(e);
+            }
+            // 下载 文件
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE);
+            }
+
+            try {
+                // 从证书文件中读取证书
+                InputStream certStream = getResources().openRawResource(R.raw.fullchain);
+                CertificateFactory cf = CertificateFactory.getInstance("X.509");
+                X509Certificate caCert = (X509Certificate) cf.generateCertificate(certStream);
+
+// 创建一个信任锚，并将其添加到默认的KeyStore中
+                KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
+                ks.load(null, null); // 创建一个新的KeyStore实例
+                ks.setCertificateEntry("caCert", caCert); // 将证书添加到KeyStore中，并给它一个名称"caCert"
+
+// 创建一个TrustManager，只信任我们的信任锚
+                TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+                tmf.init(ks); // 初始化TrustManagerFactory，使用我们的KeyStore
+                TrustManager[] tms = tmf.getTrustManagers(); // 获取TrustManager数组，其中有一个TrustManager只信任信任锚
+                if (tms != null && tms.length == 1 && tms[0] instanceof X509TrustManager) { // 确保我们只有一个TrustManager，并且它只信任X509证书（也就是我们的信任锚）
+                    X509TrustManager trustManager = (X509TrustManager) tms[0]; // 获取我们的TrustManager
+
+                    OkHttpClient client = new OkHttpClient.Builder()
+                            .connectTimeout(10, TimeUnit.SECONDS)  // 连接超时
+                            .readTimeout(30, TimeUnit.SECONDS)  // 读取超时
+                            .writeTimeout(30, TimeUnit.SECONDS)  // 写入超时
+                            .sslSocketFactory(getUnsafeOkHttpClient(), trustManager) // 设置我们的SSLSocketFactory和TrustManager
+                            .hostnameVerifier((hostname, session) -> true)
+                            .build(); // 构建OkHttpClient实例，并将我们的TrustManager设置到这个实例中
+                    Request request = new Request.Builder()
+                            .url(mUrl)
+                            .build(); // 构建Request实例，请求指定的URL
+                    Response response = client.newCall(request).execute(); // 执行请求并获取响应
+                    byte[] byteArray = response.body().bytes(); // 获取响应体并转换为字节数组
+                    String responseBody = new String(byteArray, StandardCharsets.UTF_8); // 将字节数组转换为字符串并存储在responseBody变量中
+                    FileOutputStream output = this.openFileOutput(mOutputPath, Context.MODE_PRIVATE); // 创建一个文件输出流，用于将数据写入到指定的文件中
+                    output.write(responseBody.getBytes());  // 将字符串转换为字节数组并写入到输出流中
+                    output.close(); // 关闭输出流
+                    Log.d("Apk", "Download_Apk_file: 下载完成");
+                } else {
+                    throw new IllegalArgumentException("Unexpected number of X509TrustManagers: " + tms.length); // 如果TrustManager的数量不是1，抛出异常
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            File apkFile = new File(getFilesDir(), mOutputPath);
+
+            if (!apkFile.exists()) {
+                // 文件不存在，你需要处理这个问题
+                Log.d("Apk", "Download_Apk_file: 文件不存在");
+            } else if (!apkFile.canRead()) {
+                Log.d("Apk", "Download_Apk_file: 文件不可读");
+                // 文件不可读，你可能需要请求权限
+            } else {
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+                Uri uri = FileProvider.getUriForFile(this, "com.example.mykcb.fileprovider", apkFile);
+                intent.setDataAndType(uri, "application/vnd.android.package-archive");
+
+                startActivity(intent);
+            }
+        }).start();
+        myerrs.show();
+    }
+    public static SSLSocketFactory getUnsafeOkHttpClient() {
+        try {
+            @SuppressLint("CustomX509TrustManager") final TrustManager[] trustAllCerts = new TrustManager[]{
+                    new X509TrustManager() {
+                        @SuppressLint("TrustAllX509TrustManager")
+                        @Override
+                        public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
+                        }
+
+                        @SuppressLint("TrustAllX509TrustManager")
+                        @Override
+                        public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
+                        }
+
+                        @Override
+                        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                            return new java.security.cert.X509Certificate[]{};
+                        }
+                    }
+            };
+
+            final SSLContext sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
+            return sslContext.getSocketFactory();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
     /**
      * @ 自动t填充 密码账号
      */
@@ -117,9 +297,9 @@ public class MainActivity extends AppCompatActivity {
         AlertDialog viewasds = dialog.show();
 
         new Thread(() -> {
-            String url = "http://shaotools.com:3038/getkcb?username="+username.getText()+"&password="+password.getText();
+            String url = "http://shaotools.com:3038/getkcb?username=" + username.getText() + "&password=" + password.getText();
 //            String params = "null";
-            Log.d("ur",url);
+            Log.d("ur", url);
             String json = "{}";
             RequestBody body = RequestBody.create(MEDIA_TYPE, json);
             OkHttpClient client = new OkHttpClient.Builder()
@@ -145,7 +325,7 @@ public class MainActivity extends AppCompatActivity {
 
                     // 登录成功，保存数据
                     setFile setf1 = new setFile(this);
-                    setf1.write(DATASRC,responseBody);
+                    setf1.write(DATASRC, responseBody);
 
                     // 刷新 界面 widget
 
@@ -153,9 +333,8 @@ public class MainActivity extends AppCompatActivity {
                     ComponentName thisAppWidget = new ComponentName(MainActivity.this, Nodemon.class);
 //                    AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
                     int[] allAppWidgetsIds = appWidgetManager.getAppWidgetIds(thisAppWidget);
-                    Log.d("allAppWidgetsIds", Arrays.toString(allAppWidgetsIds));
                     widgetSetOv wid = new widgetSetOv();
-                    wid.setshowlayout(MainActivity.this,allAppWidgetsIds,appWidgetManager);
+                    wid.setshowlayout(MainActivity.this, allAppWidgetsIds, appWidgetManager);
 
 
                     startActivity(new Intent(this, MainHome_My.class));  // 跳转到首页

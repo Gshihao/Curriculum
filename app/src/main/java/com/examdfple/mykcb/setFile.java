@@ -1,10 +1,18 @@
 package com.examdfple.mykcb;
 
 import android.content.Context;
+import android.content.res.AssetManager;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 class setFile{
     private final Context mContext;
@@ -38,5 +46,18 @@ class setFile{
         //关闭输入流
         input.close();
         return sb.toString();
+    }
+    public JSONArray assetct (Context context,String fileName) throws Exception{
+        AssetManager am = context.getAssets();
+        InputStream is = am.open("sidebardirectory.json");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        StringBuilder sb = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            sb.append(line);
+        }
+        reader.close();
+        String json = sb.toString();
+        return new JSONArray(json);
     }
 }

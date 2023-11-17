@@ -1,0 +1,53 @@
+package com.examdfple.mykcb;
+
+import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView.ViewHolder;
+
+import java.util.ArrayList;
+
+public class Eceely_Demo_Adpdet extends RecyclerView.Adapter<Eceely_Demo_Adpdet.MyMOdelDemo> {
+    Context mcintent;
+    ArrayList<Draw_Dome_Model> itemlist;
+    public Eceely_Demo_Adpdet(Context mcontent, ArrayList<Draw_Dome_Model> itemlist) {
+        this.mcintent = mcontent;
+        this.itemlist = itemlist;
+    }
+
+    @NonNull
+    @Override
+    public Eceely_Demo_Adpdet.MyMOdelDemo onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(this.mcintent).inflate(R.layout.draw_item,parent,false);
+        return new MyMOdelDemo(view);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull Eceely_Demo_Adpdet.MyMOdelDemo holder, int position) {
+    // 设置数据
+        holder.textviewitem_name.setText(itemlist.get(position).getItem_name());
+//        holder.imgview_item.setImageURI(itemlist.get(position).getItem_icon());
+    }
+  //  获取传入数据的大小
+    @Override
+    public int getItemCount() {
+        return this.itemlist.size();
+    }
+
+    public static class MyMOdelDemo extends ViewHolder{
+        TextView textviewitem_name;
+        ImageView imgview_item;
+        public MyMOdelDemo(@NonNull View itemView) {
+            super(itemView);
+            textviewitem_name = itemView.findViewById(R.id.drawitem_id);
+//            imgview_item = itemView.findViewById(R.id.imgviewdar);
+
+        }
+    }
+}

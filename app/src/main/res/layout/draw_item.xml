@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="20dp"
+    android:layout_marginTop="10dp"
+    tools:ignore="UseCompoundDrawables">
+
+     <ImageView
+         android:id="@+id/imgviewdar"
+         android:layout_width="18dp"
+         android:layout_height="20dp"
+         android:src="@mipmap/liuyan"
+         android:layout_gravity="center"
+         android:contentDescription="TODO" />
+     <TextView
+         android:layout_width="match_parent"
+         android:layout_height="40dp"
+         android:gravity="center|left"
+         android:id="@+id/drawitem_id"
+         android:text="标题"
+         android:textSize="14dp"
+         android:layout_marginStart="20dp"
+         tools:ignore="RtlHardcoded" />
+</LinearLayout>

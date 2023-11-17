@@ -12,7 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-public class MainKcb extends MainActivity {
+public class MainKcb extends AppCompatActivity {
     public SharedPreferences sharedPreferences;
     public SharedPreferences.Editor editor;
     @Override

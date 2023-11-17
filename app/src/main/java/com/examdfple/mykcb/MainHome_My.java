@@ -11,20 +11,25 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -32,7 +37,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class MainHome_My extends MainActivity{
+public class MainHome_My extends AppCompatActivity {
     public ImageView imgs,darwimg;
     private final String ASKKey = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhcHBJZCI6ODgzODczNzM2MjQ0Njc4NjU2LCJnZXRNYW5hZ2VtZW50SWQiOjcyNDU2MzA5MzU4Nzg0MTAyNCwiVElNRSI6MTY5OTg0MzUzMDU0Nn0.JgTbBUCkLwa7Iy5SD-7-me-buLgky92JNk0Bb_cwcPw";
     @Override
@@ -158,7 +163,28 @@ public class MainHome_My extends MainActivity{
         startActivity(intent);
     }
     public void drawstructure(){
-
-
+        // 设置侧滑栏内容
+        RecyclerView reclviewa = findViewById(R.id.myRecyclerView);
+        ArrayList<Draw_Dome_Model> datalist = new ArrayList<>();
+        // 动态 创建数据
+        setFile setfile= new setFile(MainHome_My.this);
+        try {
+            JSONArray redfile =  setfile.assetct(MainHome_My.this,"sidebardirectory.json");
+            for (int i = 0 ; i < redfile.length();i++){
+                JSONObject jsoib = new JSONObject(redfile.get(i).toString());
+                datalist.add(new Draw_Dome_Model(jsoib.get("itemname").toString()));
+            }
+        } catch (Exception e) {
+            datalist.add(new Draw_Dome_Model("数据读取异常"));
+        }
+        Eceely_Demo_Adpdet ecadpyer = new Eceely_Demo_Adpdet(MainHome_My.this,datalist);
+        reclviewa.setAdapter(ecadpyer);
+        reclviewa.setLayoutManager(new LinearLayoutManager(MainHome_My.this));
+        reclviewa.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("sdf",v.toString());
+            }
+        });
     }
 }
