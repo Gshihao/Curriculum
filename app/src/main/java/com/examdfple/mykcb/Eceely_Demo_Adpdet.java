@@ -1,6 +1,15 @@
 package com.examdfple.mykcb;
 
+import static com.examdfple.mykcb.R.mipmap.lianxi;
+
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 
@@ -29,10 +39,19 @@ public class Eceely_Demo_Adpdet extends RecyclerView.Adapter<Eceely_Demo_Adpdet.
     }
 
     @Override
-    public void onBindViewHolder(@NonNull Eceely_Demo_Adpdet.MyMOdelDemo holder, int position) {
+    @SuppressLint("ResourceType")
+    public void onBindViewHolder(@NonNull Eceely_Demo_Adpdet.MyMOdelDemo holder, @SuppressLint("RecyclerView") int position) {
     // 设置数据
         holder.textviewitem_name.setText(itemlist.get(position).getItem_name());
-//        holder.imgview_item.setImageURI(itemlist.get(position).getItem_icon());
+        Bitmap bitmap = BitmapFactory.decodeResource(mcintent.getResources(),itemlist.get(position).getItem_icon());
+        holder.imgview_item.setImageBitmap(bitmap);
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mcintent.startActivity(new Intent(mcintent,itemlist.get(position).getItemActivity()));  // 跳转到首页
+
+            }
+        });
     }
   //  获取传入数据的大小
     @Override
@@ -46,7 +65,7 @@ public class Eceely_Demo_Adpdet extends RecyclerView.Adapter<Eceely_Demo_Adpdet.
         public MyMOdelDemo(@NonNull View itemView) {
             super(itemView);
             textviewitem_name = itemView.findViewById(R.id.drawitem_id);
-//            imgview_item = itemView.findViewById(R.id.imgviewdar);
+            imgview_item = itemView.findViewById(R.id.imgviewdar);
 
         }
     }

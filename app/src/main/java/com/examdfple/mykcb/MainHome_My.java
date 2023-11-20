@@ -38,8 +38,9 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class MainHome_My extends AppCompatActivity {
-    public ImageView imgs,darwimg;
+    public ImageView imgs, darwimg;
     private final String ASKKey = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhcHBJZCI6ODgzODczNzM2MjQ0Njc4NjU2LCJnZXRNYW5hZ2VtZW50SWQiOjcyNDU2MzA5MzU4Nzg0MTAyNCwiVElNRSI6MTY5OTg0MzUzMDU0Nn0.JgTbBUCkLwa7Iy5SD-7-me-buLgky92JNk0Bb_cwcPw";
+
     @Override
     @SuppressLint({"MissingInflatedId", "LocalSuppress", "WrongViewCast"})
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +57,7 @@ public class MainHome_My extends AppCompatActivity {
         todl.setTitleTextColor(getColor(R.color.white));
         todl.setTitle("首页");
         todl.setNavigationIcon(R.drawable.toolcaricon);
-        DrawerLayout draw= findViewById(R.id.sdds);
+        DrawerLayout draw = findViewById(R.id.sdds);
         DrawableCompat.setTint(Objects.requireNonNull(todl.getNavigationIcon()), Color.WHITE); // 设置透明背景色
         setSupportActionBar(todl); // 要写在监听器 前面
         todl.setNavigationOnClickListener(new View.OnClickListener() {
@@ -70,11 +71,12 @@ public class MainHome_My extends AppCompatActivity {
         drawstructure();
 
     }
+
     /**
      * @apiNote 设置广告图
-     * */
-    public void setImg(){
-        new Thread(()->{
+     */
+    public void setImg() {
+        new Thread(() -> {
             OkHttpClient client = new OkHttpClient.Builder()
                     .connectTimeout(10, TimeUnit.SECONDS)  // 连接超时
                     .readTimeout(30, TimeUnit.SECONDS)  // 读取超时
@@ -87,8 +89,7 @@ public class MainHome_My extends AppCompatActivity {
                 Response response = client.newCall(request).execute();
                 if (response.code() == 200) {
                     byte[] byteArray = response.body().bytes();
-                    Bitmap bitmap1 = BitmapFactory.decodeByteArray(byteArray, 0,byteArray.length);
-
+                    Bitmap bitmap1 = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
 
                     // 在完成时，通过 Handler 将修改 UI 的操作发送到 UI 线程
                     final Handler handler = new Handler(Looper.getMainLooper());
@@ -107,11 +108,13 @@ public class MainHome_My extends AppCompatActivity {
             }
         }).start();
     }
-    public void Tiaozhuan(View view){
+
+    public void Tiaozhuan(View view) {
         startActivity(new Intent(this, MainKcb.class));
     }
-    public void announcement(){
-        new Thread(()->{
+
+    public void announcement() {
+        new Thread(() -> {
             OkHttpClient client = new OkHttpClient.Builder()
                     .connectTimeout(10, TimeUnit.SECONDS)  // 连接超时
                     .readTimeout(30, TimeUnit.SECONDS)  // 读取超时
@@ -119,15 +122,15 @@ public class MainHome_My extends AppCompatActivity {
                     .build();
             Request request = new Request.Builder()
                     .url("https://potato.xudakj.com/api/getNotice")
-                    .addHeader("Content-Type","application/x-www-form-urlencoded")
-                    .addHeader("askKey",ASKKey)
+                    .addHeader("Content-Type", "application/x-www-form-urlencoded")
+                    .addHeader("askKey", ASKKey)
                     .build();
             try {
                 Response response = client.newCall(request).execute();
                 byte[] byteArray = response.body().bytes();
                 String responseBody = new String(byteArray, StandardCharsets.UTF_8);
                 JSONObject jsob = new JSONObject(responseBody);
-                JSONObject jsda= new JSONObject(jsob.get("data").toString());
+                JSONObject jsda = new JSONObject(jsob.get("data").toString());
                 Handler handler = new Handler(Looper.getMainLooper());
                 handler.post(new Runnable() {
                     @Override
@@ -135,9 +138,9 @@ public class MainHome_My extends AppCompatActivity {
                         // 在主线程上执行操作，例如显示AlertDialog
                         AlertDialog myerro = null;
                         try {
-                              myerro = new AlertDialog.Builder(MainHome_My.this)
+                            myerro = new AlertDialog.Builder(MainHome_My.this)
                                     .setTitle(jsda.get("head").toString())
-                                    .setMessage("\n"+jsda.get("str")+"\n\n"+jsda.get("createdDate"))
+                                    .setMessage("\n" + jsda.get("str") + "\n\n" + jsda.get("createdDate"))
                                     .setNegativeButton("知晓", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
@@ -155,36 +158,42 @@ public class MainHome_My extends AppCompatActivity {
             }
         }).start();
     }
-    public void Help(View view){
-       // https://note.youdao.com/s/7kAPAX2w// 创建一个 Intent，用于启动浏览器
+
+    public void Help(View view) {
+        // https://note.youdao.com/s/7kAPAX2w// 创建一个 Intent，用于启动浏览器
         Intent intent = new Intent(Intent.ACTION_VIEW);
         String url = "https://note.youdao.com/s/7kAPAX2w";
         intent.setData(Uri.parse(url));
         startActivity(intent);
     }
-    public void drawstructure(){
+
+    public void drawstructure() {
         // 设置侧滑栏内容
         RecyclerView reclviewa = findViewById(R.id.myRecyclerView);
         ArrayList<Draw_Dome_Model> datalist = new ArrayList<>();
         // 动态 创建数据
-        setFile setfile= new setFile(MainHome_My.this);
-        try {
-            JSONArray redfile =  setfile.assetct(MainHome_My.this,"sidebardirectory.json");
-            for (int i = 0 ; i < redfile.length();i++){
-                JSONObject jsoib = new JSONObject(redfile.get(i).toString());
-                datalist.add(new Draw_Dome_Model(jsoib.get("itemname").toString()));
-            }
-        } catch (Exception e) {
-            datalist.add(new Draw_Dome_Model("数据读取异常"));
+        // 创建列表 图标
+        int lenss = 3;
+        int[] itemicon = new int[lenss];
+        itemicon[0] = R.mipmap.help;
+        itemicon[1] = R.mipmap.lianxi;
+        itemicon[2] = R.mipmap.ic_launcher;
+        // 创建列表 标题
+        String[] itemname = new String[lenss];
+        itemname[0] = "设置";
+        itemname[1] ="联系我们";
+        itemname[2] ="关于我们";
+        // 创建列表 跳转界面
+        Class[] itemActivity = new Class[lenss];
+        itemActivity[0] = Setup.class;
+        itemActivity[1] = Contact_me.class;
+        itemActivity[2] = About_Me.class;
+        for (int i = 0; i < lenss; i++) {
+            datalist.add(new Draw_Dome_Model(itemname[i],itemicon[i],itemActivity[i]));
         }
-        Eceely_Demo_Adpdet ecadpyer = new Eceely_Demo_Adpdet(MainHome_My.this,datalist);
+        Eceely_Demo_Adpdet ecadpyer = new Eceely_Demo_Adpdet(MainHome_My.this, datalist);
         reclviewa.setAdapter(ecadpyer);
         reclviewa.setLayoutManager(new LinearLayoutManager(MainHome_My.this));
-        reclviewa.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d("sdf",v.toString());
-            }
-        });
+
     }
 }

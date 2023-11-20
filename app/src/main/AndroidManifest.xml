@@ -53,7 +53,21 @@
             android:name=".MainKcb"
             android:exported="true"
             android:label="课程表" />
-
+        <!--设置页 -->
+        <activity
+            android:name=".Setup"
+            android:exported="true"
+            android:label="设置" />
+        <!--联系我 -->
+        <activity
+            android:name=".Contact_me"
+            android:exported="true"
+            android:label="联系我" />
+        <!--关于我 -->
+        <activity
+            android:name=".About_Me"
+            android:exported="true"
+            android:label="关于我" />
         <receiver
             android:name=".Nodemon"
             android:exported="false"

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.MyKCB.blue" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/Theme_one_F2A45F</item>
+        <item name="colorPrimaryVariant">@color/Theme_one_4C9EED</item>
+        <item name="colorOnPrimary">@color/Theme_one_87CFFD</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/Theme_one_C09A6C</item>
+        <item name="colorSecondaryVariant">@color/Theme_one_F9D6A5</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <!-- Customize your theme here. -->
+    </style>
+</resources>
