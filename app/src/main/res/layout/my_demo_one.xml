@@ -8,7 +8,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="180dp"
-        android:gravity="center">
+        android:gravity="center"
+        android:background="@drawable/shape_gradient">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -33,7 +34,7 @@
                     android:textSize="20dp"
                     android:singleLine = "true"
                     android:text="课程"
-                    android:textColor="#f000"
+                    android:textColor="#ffffff"
                     android:gravity="center"/>
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -46,6 +47,7 @@
                         android:id="@+id/TeachersName"
                         android:singleLine = "true"
                         android:textSize="11dp"
+                        android:textColor="#ffffff"
                         android:text="孙**"/>
                     <TextView
                         android:layout_width="wrap_content"
@@ -54,6 +56,7 @@
                         android:singleLine = "true"
                         android:layout_marginLeft="10dp"
                         android:textSize="11dp"
+                        android:textColor="#ffffff"
                         android:text="417"/>
                     <TextView
                         android:layout_width="wrap_content"
@@ -61,6 +64,7 @@
                         android:textSize="11dp"
                         android:layout_marginLeft="10dp"
                         android:id="@+id/Weeks"
+                        android:textColor="#ffffff"
                         android:text="18周"/>
                     <TextView
                         android:layout_width="wrap_content"
@@ -72,6 +76,7 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/week"
                         android:textSize="11dp"
+                        android:textColor="#ffffff"
                         android:text="周四"/>
                 </LinearLayout>
                 <LinearLayout

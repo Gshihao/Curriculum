@@ -16,6 +16,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.FileUtils;
@@ -68,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTheme(R.style.Theme_MyKCB);
         setContentView(R.layout.activity_main);
         sharedPreferences = getSharedPreferences("my_data", MODE_PRIVATE);
         username = findViewById(R.id.edit_text_account);

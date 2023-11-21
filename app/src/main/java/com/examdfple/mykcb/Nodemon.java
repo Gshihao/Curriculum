@@ -1,31 +1,26 @@
 package com.examdfple.mykcb;
 
-import static android.content.Intent.getIntent;
-
-import android.app.PendingIntent;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.util.Log;
 import android.widget.RemoteViews;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.jsoup.Jsoup;
-import org.w3c.dom.Document;
+
 
 import java.io.IOException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
 
 public class Nodemon extends AppWidgetProvider {
     public setFile sef1;
@@ -90,7 +85,9 @@ public class Nodemon extends AppWidgetProvider {
                 // 这个layout就是我们之前定义的initiallayout
                 R.layout.my_demo_one);
         JSONObject retudat ;
-        Log.d("df____________", String.valueOf(nextClass(context, appWidgetIds, appWidgetManager) == null));
+        String TeachersName = "完善中";
+        String TeachingClassroom = "完善中";
+//        Log.d("df____________", String.valueOf(nextClass(context, appWidgetIds, appWidgetManager) == null));
         if(nextClass(context, appWidgetIds, appWidgetManager) == null){
             retudat = new JSONObject();
             try {
@@ -100,19 +97,30 @@ public class Nodemon extends AppWidgetProvider {
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }
-            Log.d("jsonm",retudat.toString());
         }else{
             //
             try {
                 retudat = new JSONObject(nextClass(context, appWidgetIds, appWidgetManager).toString());
+                String regex = "<a[^>]+>([^<]+)<\\/a>";
+                Pattern pattern = Pattern.compile(regex);
+                Matcher matcher = pattern.matcher(retudat.get("tmc")+"");;
+                if (matcher.find()) { // 老师
+                    TeachersName = matcher.group(1);
+                }
+
+                Pattern pattern2 = Pattern.compile(regex);
+                Matcher matcher2 = pattern2.matcher(retudat.get("croommc")+"");;
+                if (matcher2.find()) { // 教室
+                    TeachingClassroom = matcher2.group(1);
+                }
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }
         }
        // 定义正则
          // 获取准确的教师和教室
-        String TeachersName = "完善中";
-        String TeachingClassroom = "完善中";
+
+
         try {
             views.setTextViewText(R.id.Nextsection,retudat.get("jxbmc").toString());  // 课程
             views.setTextViewText(R.id.TeachersName,TeachersName); // 教师
