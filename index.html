@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        td {
+            border: 1px solid black;
+            text-align: center;
+            padding: 5px 5px;
+            font-size: 14px;
+        }
+        td a{
+            font-size: 12px;
+        }
+        /* table tr:nth-child(4){
+            border-bottom: 2px solid rgb(29, 116, 11);
+            margin-bottom: 10px;
+        } */
+    </style>
+</head>
+
+<body>
+    <!-- <button onclick="getfu()">132</button> -->
+    <table class="table">
+        <tr>
+            <td>星期一</td>
+            <td>星期二</td>
+            <td>星期三</td>
+            <td>星期四</td>
+            <td>星期五</td>
+            <td>星期六</td>
+            <td>星期天</td>
+        </tr>
+        <!-- <th>
+            <td>asd</td>
+        </th> -->
+    </table>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!-- <script src="./ax.js"></script> -->
+    <script>
+        // 获取 url
+        let hee = location.href.split("?")[1]
+        let username = hee.split("&")[0].split("=")[1]
+        let password = hee.split("&")[1].split("=")[1]
+        const tab = document.querySelector(".table");
+        axios({
+            url: 'http://shaotools.com:3038/getkcb?username='+username+'&password='+password,
+            method: 'POST',
+        }).then(result => {
+            let xuanran = new Array(8);
+            let ic = 0; // 第几届
+            for (let i = 0; i < xuanran.length; i++) {
+                xuanran[i] = new Array(7);
+            }
+            result.data.forEach((element, index) => {
+                // 判断是否切换下一行
+                if (index !== 0 && result.data[index - 1].xingqi >= element.xingqi) {
+                    ic++;
+                }
+                // console.log(element, index);
+                xuanran[ic][element.xingqi - 1] = element
+            });
+            // console.log(xuanran);
+            let ruttab = ''
+            // 合并上下单元格重要 ✳
+            let sum;
+            for (let a = 0; a < xuanran.length; a++) {
+                ruttab += `<tr>`
+                sum = 0;
+                for (let b = 0; b < xuanran[a].length; b++) {
+                    // 合并两节课合上
+                    let ifhs = true
+                    // 排除最后一排
+                    if (a < xuanran[a].length && xuanran[a][b]) {
+                        try {
+                            if (xuanran[a][b].id == xuanran[a + 1][b - sum].id) {
+                                ifhs = false
+                                xuanran[a + 1].splice(b - sum, 1)
+                                sum++;
+                                // 推理过程  
+                                // [1][0] => [1][0] d d= 0 sum = 1 
+                                // [1][2] => [1][1] d d=1 sum = 2
+                                // [1][3] => [1][2] => [1][1] d sum = 3
+                                // b1 - sum = b
+
+
+                                // [3][0] => [3][0] sum = 1
+                                // [3][1] => [3][0] sum = 2
+                                // [3][2] => [3][1] => [3][0] sum = 3
+                                // [3][3] => [3][2] => [3][1] => [3][0] sum = 4
+
+                                console.log(xuanran[a + 1][b].jxbmc, `[${a + 1}][${b}]`, `sum=${sum}`);
+
+                            }
+                        } catch (error) {
+
+                        }
+                    }
+                    ruttab += `<td rowspan="${ifhs ? 1 : 2}">${xuanran[a][b] ? `${settabtd(xuanran[a][b])}` : ''}</td>`
+                }
+                ruttab += `</tr>`
+            }
+            tab.innerHTML += ruttab
+            console.log(xuanran);
+
+        })
+        // 此方法用处理 显示文本
+        function settabtd(obj) {
+            let jxbmc = obj.jxbmc.split('-')[0] // 课程名字
+            let tmc = obj.tmc // 教师姓名
+            let croommc = obj.croommc // 上课地点
+            return `${jxbmc}<br>${tmc}/${croommc}`
+        }
+
+        // 点击上课地点
+        function openCrkb (tm,id){
+
+        }
+        // 点击上课教师
+        function openJskb(tm,id){
+           console.log(tm);
+        }
+    </script>
+</body>
+
+</html>
