@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -40,10 +41,10 @@ public class Contact_me extends AppCompatActivity {
       //        跳转QQ
 
         try {
-            String url = "mqqwpa://im/card?uin=1462905973"; // 个人名片URL
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-            startActivity(intent);
+            String urlQQ = "mqqwpa://im/chat?chat_type=wpa&uin=1462905973&version=1";
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(urlQQ)));
         }catch (Exception e){
+            Log.d("sd_______", "onCreate: "+e);
             Toast.makeText(this, "您还没有安装QQ，请先安装软件\n"+e, Toast.LENGTH_SHORT).show();
         }
     }

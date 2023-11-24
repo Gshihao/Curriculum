@@ -20,106 +20,12 @@
             android:background="@color/Theme_one_F2A45F"
            />
         <!--   放公告-->
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-        </LinearLayout>
-              <!--  放广告图片   -->
-        <LinearLayout
+        <WebView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:gravity="center">
-
-            <ImageView
-                android:id="@+id/sddsfsdfssfd"
-                android:layout_width="match_parent"
-                android:layout_height="150dp"
-                android:layout_gravity="center"
-                android:background="#fff"
-                android:src="@mipmap/ic_launchermy" />
-        </LinearLayout>
-        <!--     功区-->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp">
-            <!-- 课程表 -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="80dp"
-                android:layout_weight="1.0"
-                android:gravity="center"
-                android:onClick="Tiaozhuan"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
-                    android:src="@mipmap/kecheng" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="课程表" />
-            </LinearLayout>
-            <!-- 帮助 -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="80dp"
-                android:layout_weight="1.0"
-                android:gravity="center"
-                android:onClick="Help"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
-                    android:src="@mipmap/help" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="帮助" />
-            </LinearLayout>
-            <!-- 留言 -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="80dp"
-                android:layout_weight="1.0"
-                android:gravity="center"
-                android:onClick="Tiaozhuan"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
-                    android:src="@mipmap/liuyan" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="留言" />
-            </LinearLayout>
-<!--            &lt;!&ndash; 课程表 &ndash;&gt;-->
-<!--            <LinearLayout-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="80dp"-->
-<!--                android:layout_weight="1.0"-->
-<!--                android:gravity="center"-->
-<!--                android:onClick="Tiaozhuan"-->
-<!--                android:orientation="vertical">-->
-
-<!--                <ImageView-->
-<!--                    android:layout_width="35dp"-->
-<!--                    android:layout_height="35dp"-->
-<!--                    android:src="@mipmap/kecheng" />-->
-<!--                <TextView-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:text="课程表" />-->
-<!--            </LinearLayout>-->
-        </LinearLayout>
+            android:layout_height="match_parent"
+            android:id="@+id/webview"
+            tools:ignore="WebViewLayout">
+        </WebView>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"

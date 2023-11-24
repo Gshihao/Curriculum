@@ -16,10 +16,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.FileUtils;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.StrictMode;
@@ -133,7 +131,18 @@ public class MainActivity extends AppCompatActivity {
                 }
             } else if(jsreq.get("msg").equals("已经是最新版")){
                 // 最新版
-//                Toast.makeText(this, "已经是最新版", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(this, "已经是最新版", Toast.LENGTH_SHORT).show()
+                // 点击登录按钮
+                if (username.getText().toString().equals("")) {
+                 //    账号为空
+                    return;
+                }
+                if (password.getText().toString().equals("")) {
+                   //  密码不能为空
+                    return;
+                }
+                OpenAct();
+
             }else {
                 Toast.makeText(content, "用户版本获取失败", Toast.LENGTH_SHORT).show();
             }
@@ -271,8 +280,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @SuppressLint("WrongViewCast")
-    public Boolean login(View view) {
-
+    public void login(View view) {
+        OpenAct();
+    }
+    /**
+     * 打开新页面
+     * */
+    public boolean OpenAct(){
         if (username.getText().toString().equals("")) {
             Toast.makeText(this, "账号不能为空", Toast.LENGTH_SHORT).show();
             return false;
@@ -388,7 +402,7 @@ public class MainActivity extends AppCompatActivity {
         }).start();
         // 检查是否已获得网络权限
 //        this.finish();
-        return true;
+        return false;
     }
 }
 //文件操作

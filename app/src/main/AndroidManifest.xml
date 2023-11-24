@@ -63,12 +63,21 @@
         <activity
             android:name=".Contact_me"
             android:exported="true"
-            android:label="联系我" />
+            android:label="联系我" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
+        </activity>
         <!--关于我 -->
         <activity
             android:name=".About_Me"
             android:exported="true"
             android:label="关于我" />
+<!--        帮助-->
+        <activity android:name=".view.Help.help"
+            android:exported="true"
+            android:label="帮助" />
         <receiver
             android:name=".Nodemon"
             android:exported="false"
@@ -76,7 +85,6 @@
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
-
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/my_demo_widget" />

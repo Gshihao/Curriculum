@@ -85,15 +85,15 @@ public class Nodemon extends AppWidgetProvider {
                 // 这个layout就是我们之前定义的initiallayout
                 R.layout.my_demo_one);
         JSONObject retudat ;
-        String TeachersName = "完善中";
-        String TeachingClassroom = "完善中";
+        String TeachersName = "歇会吧";
+        String TeachingClassroom = "歇会吧";
 //        Log.d("df____________", String.valueOf(nextClass(context, appWidgetIds, appWidgetManager) == null));
         if(nextClass(context, appWidgetIds, appWidgetManager) == null){
             retudat = new JSONObject();
             try {
-                retudat.put("croommc","宿舍");
-                retudat.put("jxbmc","无信息");
-                retudat.put("tmc","手机");
+                retudat.put("croommc","歇会吧");
+                retudat.put("jxbmc","歇会吧");
+                retudat.put("tmc","歇会吧");
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }
