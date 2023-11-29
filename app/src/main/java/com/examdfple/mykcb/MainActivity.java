@@ -88,7 +88,6 @@ public class MainActivity extends AppCompatActivity {
     private void Determine_whether_toupdate(Context content) {
         PotatoApi poapi = new PotatoApi(content);
         JSONObject jsreq = poapi.ifupdate();
-        Log.d("更新", jsreq + "");
         AlertDialog.Builder myerro = new AlertDialog.Builder(content);
         try {
             if (jsreq.get("ifreq").equals(true)) {
@@ -131,7 +130,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             } else if(jsreq.get("msg").equals("已经是最新版")){
                 // 最新版
-//                Toast.makeText(this, "已经是最新版", Toast.LENGTH_SHORT).show()
                 // 点击登录按钮
                 if (username.getText().toString().equals("")) {
                  //    账号为空
@@ -149,95 +147,6 @@ public class MainActivity extends AppCompatActivity {
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private void Download_Apk_file(JSONObject jsob) {
-        AlertDialog myerrs = new AlertDialog.Builder(MainActivity.this)
-                .setTitle("下载中")
-                .setView(R.layout.downdole_demo_day_one)
-                .setCancelable(false)
-                .create();
-        new Thread(() -> {
-            //                Environment.getExternalStorageDirectory() + "/download/
-            //跳转到开启apk安装权限开启的界面，让用户手动打开
-
-            String mUrl = null;
-            String mOutputPath = null;
-            try {
-                mUrl = jsob.get("updateUrl").toString();
-                // this.getFilesDir()
-                mOutputPath = "STools.apk";
-//                Environment.getExternalStorageDirectory() + "/download/
-            } catch (JSONException e) {
-                Log.d("获取路径失败", e.toString());
-                throw new RuntimeException(e);
-            }
-            // 下载 文件
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE);
-            }
-
-            try {
-                // 从证书文件中读取证书
-                InputStream certStream = getResources().openRawResource(R.raw.fullchain);
-                CertificateFactory cf = CertificateFactory.getInstance("X.509");
-                X509Certificate caCert = (X509Certificate) cf.generateCertificate(certStream);
-
-// 创建一个信任锚，并将其添加到默认的KeyStore中
-                KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
-                ks.load(null, null); // 创建一个新的KeyStore实例
-                ks.setCertificateEntry("caCert", caCert); // 将证书添加到KeyStore中，并给它一个名称"caCert"
-
-// 创建一个TrustManager，只信任我们的信任锚
-                TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-                tmf.init(ks); // 初始化TrustManagerFactory，使用我们的KeyStore
-                TrustManager[] tms = tmf.getTrustManagers(); // 获取TrustManager数组，其中有一个TrustManager只信任信任锚
-                if (tms != null && tms.length == 1 && tms[0] instanceof X509TrustManager) { // 确保我们只有一个TrustManager，并且它只信任X509证书（也就是我们的信任锚）
-                    X509TrustManager trustManager = (X509TrustManager) tms[0]; // 获取我们的TrustManager
-
-                    OkHttpClient client = new OkHttpClient.Builder()
-                            .connectTimeout(10, TimeUnit.SECONDS)  // 连接超时
-                            .readTimeout(30, TimeUnit.SECONDS)  // 读取超时
-                            .writeTimeout(30, TimeUnit.SECONDS)  // 写入超时
-                            .sslSocketFactory(getUnsafeOkHttpClient(), trustManager) // 设置我们的SSLSocketFactory和TrustManager
-                            .hostnameVerifier((hostname, session) -> true)
-                            .build(); // 构建OkHttpClient实例，并将我们的TrustManager设置到这个实例中
-                    Request request = new Request.Builder()
-                            .url(mUrl)
-                            .build(); // 构建Request实例，请求指定的URL
-                    Response response = client.newCall(request).execute(); // 执行请求并获取响应
-                    byte[] byteArray = response.body().bytes(); // 获取响应体并转换为字节数组
-                    String responseBody = new String(byteArray, StandardCharsets.UTF_8); // 将字节数组转换为字符串并存储在responseBody变量中
-                    FileOutputStream output = this.openFileOutput(mOutputPath, Context.MODE_PRIVATE); // 创建一个文件输出流，用于将数据写入到指定的文件中
-                    output.write(responseBody.getBytes());  // 将字符串转换为字节数组并写入到输出流中
-                    output.close(); // 关闭输出流
-                    Log.d("Apk", "Download_Apk_file: 下载完成");
-                } else {
-                    throw new IllegalArgumentException("Unexpected number of X509TrustManagers: " + tms.length); // 如果TrustManager的数量不是1，抛出异常
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            File apkFile = new File(getFilesDir(), mOutputPath);
-
-            if (!apkFile.exists()) {
-                // 文件不存在，你需要处理这个问题
-                Log.d("Apk", "Download_Apk_file: 文件不存在");
-            } else if (!apkFile.canRead()) {
-                Log.d("Apk", "Download_Apk_file: 文件不可读");
-                // 文件不可读，你可能需要请求权限
-            } else {
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-
-                Uri uri = FileProvider.getUriForFile(this, "com.example.mykcb.fileprovider", apkFile);
-                intent.setDataAndType(uri, "application/vnd.android.package-archive");
-
-                startActivity(intent);
-            }
-        }).start();
-        myerrs.show();
     }
     public static SSLSocketFactory getUnsafeOkHttpClient() {
         try {
@@ -301,7 +210,6 @@ public class MainActivity extends AppCompatActivity {
         // 保存数据到
         //
         SharedPreferences.Editor editor = sharedPreferences.edit();
-
         editor.putString("username", username.getText().toString());
         editor.putString("password", password.getText().toString());
         editor.commit();
@@ -314,8 +222,6 @@ public class MainActivity extends AppCompatActivity {
 
         new Thread(() -> {
             String url = "http://shaotools.com:3038/getkcb?username=" + username.getText() + "&password=" + password.getText();
-//            String params = "null";
-            Log.d("ur", url);
             String json = "{}";
             RequestBody body = RequestBody.create(MEDIA_TYPE, json);
             OkHttpClient client = new OkHttpClient.Builder()
@@ -329,7 +235,6 @@ public class MainActivity extends AppCompatActivity {
                     .build();
             try {
                 Response response = client.newCall(request).execute();
-                Log.d("json", response.code() + "");
                 if (response.code() == 200) {
                     // 登录成功
 
@@ -338,20 +243,15 @@ public class MainActivity extends AppCompatActivity {
                     String responseBody = new String(byteArray, StandardCharsets.UTF_8);
                     // 处理返回的结果 Object Array
                     JSONArray retudat = new JSONArray(responseBody);
-
                     // 登录成功，保存数据
                     setFile setf1 = new setFile(this);
                     setf1.write(DATASRC, responseBody);
-
                     // 刷新 界面 widget
-
                     AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(MainActivity.this);
                     ComponentName thisAppWidget = new ComponentName(MainActivity.this, Nodemon.class);
-//                    AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
                     int[] allAppWidgetsIds = appWidgetManager.getAppWidgetIds(thisAppWidget);
                     widgetSetOv wid = new widgetSetOv();
                     wid.setshowlayout(MainActivity.this, allAppWidgetsIds, appWidgetManager);
-
 
                     startActivity(new Intent(this, MainHome_My.class));  // 跳转到首页
                     this.finish();
@@ -359,14 +259,11 @@ public class MainActivity extends AppCompatActivity {
                     // 关闭加载框
                     viewasds.dismiss();
                     // 当 返回类型为JSON 时
-
                     try {
                         byte[] byteArray = response.body().bytes();
                         String responseBody = new String(byteArray, StandardCharsets.UTF_8);
                         oub = new JSONObject(responseBody);
-                        Log.d("erro", oub.getString("msg"));
                     } catch (JSONException a) {
-
                     }
                     Handler handler = new Handler(Looper.getMainLooper());
                     handler.post(new Runnable() {
@@ -404,5 +301,93 @@ public class MainActivity extends AppCompatActivity {
 //        this.finish();
         return false;
     }
+//    private void Download_Apk_file(JSONObject jsob) {
+//        AlertDialog myerrs = new AlertDialog.Builder(MainActivity.this)
+//                .setTitle("下载中")
+//                .setView(R.layout.downdole_demo_day_one)
+//                .setCancelable(false)
+//                .create();
+//        new Thread(() -> {
+//            //                Environment.getExternalStorageDirectory() + "/download/
+//            //跳转到开启apk安装权限开启的界面，让用户手动打开
+//
+//            String mUrl = null;
+//            String mOutputPath = null;
+//            try {
+//                mUrl = jsob.get("updateUrl").toString();
+//                // this.getFilesDir()
+//                mOutputPath = "STools.apk";
+////                Environment.getExternalStorageDirectory() + "/download/
+//            } catch (JSONException e) {
+////                Log.d("获取路径失败", e.toString());
+//                throw new RuntimeException(e);
+//            }
+//            // 下载 文件
+//            if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+//                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE);
+//            }
+//
+//            try {
+//                // 从证书文件中读取证书
+//                InputStream certStream = getResources().openRawResource(R.raw.fullchain);
+//                CertificateFactory cf = CertificateFactory.getInstance("X.509");
+//                X509Certificate caCert = (X509Certificate) cf.generateCertificate(certStream);
+//
+//// 创建一个信任锚，并将其添加到默认的KeyStore中
+//                KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
+//                ks.load(null, null); // 创建一个新的KeyStore实例
+//                ks.setCertificateEntry("caCert", caCert); // 将证书添加到KeyStore中，并给它一个名称"caCert"
+//
+//// 创建一个TrustManager，只信任我们的信任锚
+//                TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+//                tmf.init(ks); // 初始化TrustManagerFactory，使用我们的KeyStore
+//                TrustManager[] tms = tmf.getTrustManagers(); // 获取TrustManager数组，其中有一个TrustManager只信任信任锚
+//                if (tms != null && tms.length == 1 && tms[0] instanceof X509TrustManager) { // 确保我们只有一个TrustManager，并且它只信任X509证书（也就是我们的信任锚）
+//                    X509TrustManager trustManager = (X509TrustManager) tms[0]; // 获取我们的TrustManager
+//
+//                    OkHttpClient client = new OkHttpClient.Builder()
+//                            .connectTimeout(10, TimeUnit.SECONDS)  // 连接超时
+//                            .readTimeout(30, TimeUnit.SECONDS)  // 读取超时
+//                            .writeTimeout(30, TimeUnit.SECONDS)  // 写入超时
+//                            .sslSocketFactory(getUnsafeOkHttpClient(), trustManager) // 设置我们的SSLSocketFactory和TrustManager
+//                            .hostnameVerifier((hostname, session) -> true)
+//                            .build(); // 构建OkHttpClient实例，并将我们的TrustManager设置到这个实例中
+//                    Request request = new Request.Builder()
+//                            .url(mUrl)
+//                            .build(); // 构建Request实例，请求指定的URL
+//                    Response response = client.newCall(request).execute(); // 执行请求并获取响应
+//                    byte[] byteArray = response.body().bytes(); // 获取响应体并转换为字节数组
+//                    String responseBody = new String(byteArray, StandardCharsets.UTF_8); // 将字节数组转换为字符串并存储在responseBody变量中
+//                    FileOutputStream output = this.openFileOutput(mOutputPath, Context.MODE_PRIVATE); // 创建一个文件输出流，用于将数据写入到指定的文件中
+//                    output.write(responseBody.getBytes());  // 将字符串转换为字节数组并写入到输出流中
+//                    output.close(); // 关闭输出流
+////                    Log.d("Apk", "Download_Apk_file: 下载完成");
+//                } else {
+//                    throw new IllegalArgumentException("Unexpected number of X509TrustManagers: " + tms.length); // 如果TrustManager的数量不是1，抛出异常
+//                }
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//            File apkFile = new File(getFilesDir(), mOutputPath);
+//
+//            if (!apkFile.exists()) {
+//                // 文件不存在，你需要处理这个问题
+////                Log.d("Apk", "Download_Apk_file: 文件不存在");
+//            } else if (!apkFile.canRead()) {
+////                Log.d("Apk", "Download_Apk_file: 文件不可读");
+//                // 文件不可读，你可能需要请求权限
+//            } else {
+//                Intent intent = new Intent(Intent.ACTION_VIEW);
+//                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+//
+//                Uri uri = FileProvider.getUriForFile(this, "com.example.mykcb.fileprovider", apkFile);
+//                intent.setDataAndType(uri, "application/vnd.android.package-archive");
+//
+//                startActivity(intent);
+//            }
+//        }).start();
+//        myerrs.show();
+//    }
 }
 //文件操作

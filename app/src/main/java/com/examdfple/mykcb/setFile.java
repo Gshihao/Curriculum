@@ -14,9 +14,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-class setFile{
+public class setFile{
     private final Context mContext;
-    setFile(Context mContext){
+    private final String DATNAME = "Datpack.json";
+    public setFile(Context mContext){
         super();
         this.mContext = mContext;
     }
@@ -33,6 +34,7 @@ class setFile{
         }
         return true;
     }
+
     public String read(String filename) throws IOException {
         //打开文件输入流
         FileInputStream input = mContext.openFileInput(filename);
@@ -60,4 +62,31 @@ class setFile{
         String json = sb.toString();
         return new JSONArray(json);
     }
+    /**初始化配置文件*/
+    public String initialization_Json(String fileName) {
+        //将json数据变成字符串
+        StringBuilder stringBuilder = new StringBuilder();
+        try {
+            //获取assets资源管理器
+            AssetManager assetManager = mContext.getAssets();
+            //通过管理器打开文件并读取
+            BufferedReader bf = new BufferedReader(new InputStreamReader(
+                    assetManager.open(fileName)));
+            String line;
+            while ((line = bf.readLine()) != null) {
+                stringBuilder.append(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try{
+            FileOutputStream output = mContext.openFileOutput(DATNAME, Context.MODE_PRIVATE);
+            output.write(stringBuilder.toString().getBytes());  //将String字符串以字节流的形式写入到输出流中
+            output.close();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return stringBuilder.toString();
+    }
+
 }

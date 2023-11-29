@@ -41,11 +41,12 @@ public class Contact_me extends AppCompatActivity {
       //        跳转QQ
 
         try {
-            String urlQQ = "mqqwpa://im/chat?chat_type=wpa&uin=1462905973&version=1";
+            String urlQQ = "mqqapi://card/show_pslcard?&uin=1462905973";
             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(urlQQ)));
         }catch (Exception e){
             Log.d("sd_______", "onCreate: "+e);
             Toast.makeText(this, "您还没有安装QQ，请先安装软件\n"+e, Toast.LENGTH_SHORT).show();
         }
+        this.finish();
     }
 }

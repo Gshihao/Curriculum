@@ -49,7 +49,11 @@
         <activity
             android:name=".MainHome_My"
             android:exported="true"
-            android:label="主页" /> <!-- 课程表 -->
+            android:label="主页" >
+            <meta-data
+                android:name="android.webkit.WebView.EnableSafeBrowsing"
+                android:value="false" />
+        </activity> <!-- 课程表 -->
         <activity
             android:name=".MainKcb"
             android:exported="true"

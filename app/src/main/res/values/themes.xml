@@ -17,4 +17,7 @@
     <style name="CustomTheme" parent="Theme.MyKCB">
         <item name="android:windowBackground">@drawable/shape_gradient</item>
     </style>
+    <style name="setup_item" parent="Theme.MyKCB">
+       
+    </style>
 </resources>

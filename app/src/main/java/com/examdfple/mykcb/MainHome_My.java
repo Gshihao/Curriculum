@@ -8,12 +8,18 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.View;
+import android.webkit.PermissionRequest;
+import android.webkit.WebChromeClient;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -24,12 +30,15 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.examdfple.mykcb.Tools.Home.GetWeeks;
+import com.examdfple.mykcb.Tools.Home.SetKcb;
 import com.examdfple.mykcb.view.Help.help;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -45,6 +54,9 @@ public class MainHome_My extends AppCompatActivity {
     private final String ASKKey = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhcHBJZCI6ODgzODczNzM2MjQ0Njc4NjU2LCJnZXRNYW5hZ2VtZW50SWQiOjcyNDU2MzA5MzU4Nzg0MTAyNCwiVElNRSI6MTY5OTg0MzUzMDU0Nn0.JgTbBUCkLwa7Iy5SD-7-me-buLgky92JNk0Bb_cwcPw";
     public SharedPreferences.Editor editor;
     public GetWeeks Getweek= new GetWeeks();
+    public String imgurl = "";
+    public setFile setFiles = new setFile(MainHome_My.this);
+    private final String DATNAME = "Datpack.json";
     @Override
     @SuppressLint({"MissingInflatedId", "LocalSuppress", "WrongViewCast", "SetJavaScriptEnabled"})
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,13 +70,55 @@ public class MainHome_My extends AppCompatActivity {
         sharedPreferences= getSharedPreferences("my_data", MODE_PRIVATE);
         editor= sharedPreferences.edit();
         WebView ww = findViewById(R.id.webview);
-
 //        getSupportActionBar().setTitle("My Activity");
         ww.getSettings().setDomStorageEnabled(true);
         ww.getSettings().setJavaScriptEnabled(true);  //设置WebView属性,运行执行js脚本
+        ww.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public void onPermissionRequest(PermissionRequest request) {
+                request.grant(request.getResources());
+            }
+        });
+
+        // 解决跨域问题
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
+            ww.getSettings().setAllowUniversalAccessFromFileURLs(true);
+        }else{
+            try {
+                Class<?> clazz = ww.getSettings().getClass();
+                Method method = clazz.getMethod("setAllowUniversalAccessFromFileURLs", boolean.class);
+                method.invoke(ww.getSettings(), true);
+            } catch (Exception e) {
+
+            }
+        }
+
         String username = sharedPreferences.getString("username","null");
         String password = sharedPreferences.getString("password","null");
+        // 判断用户是否登录
+        if (username.equals("")) {
+            //    账号为空
+            Toast.makeText(this, "登录异常", Toast.LENGTH_SHORT).show();
+            this.finish();
+        }
+        if (password.equals("")) {
+            //  密码不能为空
+            Toast.makeText(this, "登录异常", Toast.LENGTH_SHORT).show();
+            this.finish();
+        }
         String url ="file:///android_asset/index.html?username="+username+"&password="+password;
+        try {
+            setFiles.read(DATNAME);
+        } catch (Exception e) {
+            // 初始化配置文件
+             setFiles.initialization_Json("js/data/Dat.json");
+        }finally {
+            try {
+                // 配置Cookie
+                SetKcb set = new SetKcb();
+                ww = set.SetViewCookie(new JSONObject(setFiles.read(DATNAME)),ww);
+            }catch (Exception d){}
+        }
         ww.loadUrl(url);
         // 设置标题栏
         Toolbar todl = findViewById(R.id.toolbar);
@@ -84,20 +138,53 @@ public class MainHome_My extends AppCompatActivity {
         // 侧滑栏
         drawstructure();
 
+
+        darwimg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(MainHome_My.this, "广告图", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
+
+
 
     /**
      * @apiNote 设置广告图
      */
     public void setImg() {
         new Thread(() -> {
+            OkHttpClient client1 = new OkHttpClient.Builder()
+                    .connectTimeout(10, TimeUnit.SECONDS)  // 连接超时
+                    .readTimeout(30, TimeUnit.SECONDS)  // 读取超时
+                    .writeTimeout(30, TimeUnit.SECONDS)  // 写入超时
+                    .build();
+            Request request1 = new Request.Builder()
+                    .url("https://potato.xudakj.com/api/getDoc?key=guanggaotu")
+                    .addHeader("Content-Type", "application/x-www-form-urlencoded")
+                    .addHeader("askKey", ASKKey)
+                    .build();
+            try {
+                Response response1 = client1.newCall(request1).execute();
+                if (response1.code() == 200) {
+                    byte[] byteArray = response1.body().bytes();
+                    String responseBody = new String(byteArray, StandardCharsets.UTF_8);
+                    JSONObject jsob = new JSONObject(responseBody);
+                    JSONObject jsda = new JSONObject(jsob.get("data").toString());
+                    imgurl = jsda.get("docContent").toString();
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
             OkHttpClient client = new OkHttpClient.Builder()
                     .connectTimeout(10, TimeUnit.SECONDS)  // 连接超时
                     .readTimeout(30, TimeUnit.SECONDS)  // 读取超时
                     .writeTimeout(30, TimeUnit.SECONDS)  // 写入超时
                     .build();
+
+
             Request request = new Request.Builder()
-                    .url("http://shp.qpic.cn/collector/1462905973/882db276-c534-46ed-b8db-2a0aecb95b6d/0")
+                    .url(imgurl)
                     .build();
             try {
                 Response response = client.newCall(request).execute();
@@ -205,4 +292,5 @@ public class MainHome_My extends AppCompatActivity {
         reclviewa.setLayoutManager(new LinearLayoutManager(MainHome_My.this));
 
     }
+
 }
