@@ -21,10 +21,8 @@ public class SetupsItem {
 
     /**
      * 修改颜色值
-     *
      * @param alert   弹唱对象
      * @param M_color 默认颜色值
-     * @param jso
      * @param v
      */
     public boolean Modify_Color(AlertDialog.Builder alert, String M_color, JSONObject jso, View v) {
