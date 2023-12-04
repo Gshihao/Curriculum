@@ -2,30 +2,23 @@ package com.examdfple.mykcb;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.Notification;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.SeekBar;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.drawable.DrawableCompat;
-import androidx.core.view.GravityCompat;
 
 import com.examdfple.mykcb.Tools.Setup.SetupsItem;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.Objects;
 
 public class Setup extends AppCompatActivity {
@@ -39,7 +32,6 @@ public class Setup extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.set_up);
-
         Toolbar todl = findViewById(R.id.toolbar);
         todl.setTitleTextColor(getColor(R.color.white));
         todl.setTitle("设置");
@@ -93,23 +85,28 @@ public class Setup extends AppCompatActivity {
         });
 
     }
+    public String StrColor(String M_c){
+        String str = M_c.split("#")[1];
+        return  "#" + str.substring(6,8) + str.substring(0,6);
+    }
     public void SetupitemsJc(){}
     /**配置课程表信息*/
     public void SetuoItemsKcb(JSONObject jso) throws Exception {
       // 日期文字颜色值
         LinearLayout datetime = findViewById(R.id.Setuoitemstime_s);
-        datetime.setBackgroundColor(Color.parseColor(jso.get("DatenavigationColor").toString()));
+        datetime.setBackgroundColor(Color.parseColor(StrColor(jso.get("DatenavigationColor")+"")));
         datetime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //  修改颜色值
                 try {
-                    if( setitem.Modify_Color(new AlertDialog.Builder(Setup.this),jso.get("DatenavigationColor").toString(),jso)){
+                    if( setitem.Modify_Color(new AlertDialog.Builder(Setup.this),jso.get("DatenavigationColor").toString(),jso,v)){
                        // 修改成功
+                        Toast.makeText(Setup.this, "更改后请重启App", Toast.LENGTH_SHORT).show();
                     }else {
                         Toast.makeText(Setup.this, "修改失败", Toast.LENGTH_SHORT).show();
                     }
-                } catch (JSONException e) {
+                } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
             }
@@ -124,10 +121,13 @@ public class Setup extends AppCompatActivity {
                 editor.commit();
                 setFile setFil = new setFile(Setup.this);
                 setFil.initialization_Json("js/data/Dat.json");
-                Log.d("Sdsd", "ifSHIlihua: "+ "初始化完成");
             }else {
             }
         }catch (Exception e){
         }
+    }
+    /**刷新页面*/
+    public void SetSet_it() throws Exception {
+        SetuoItemsKcb(datJS);
     }
 }

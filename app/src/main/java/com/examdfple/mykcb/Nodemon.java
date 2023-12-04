@@ -2,6 +2,8 @@ package com.examdfple.mykcb;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import android.annotation.SuppressLint;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
@@ -78,10 +80,11 @@ public class Nodemon extends AppWidgetProvider {
     /**
      * @apiNote 重构widget 页面
      * */
+    @SuppressLint("RemoteViewLayout")
     public void Refactoringpages(Context context, int[] appWidgetIds, AppWidgetManager appWidgetManager) {
        // 重构widget 页面
         nextClass(context,appWidgetIds,appWidgetManager);
-        RemoteViews views = new RemoteViews(context.getPackageName(),
+         RemoteViews views = new RemoteViews(context.getPackageName(),
                 // 这个layout就是我们之前定义的initiallayout
                 R.layout.my_demo_one);
         JSONObject retudat ;
@@ -92,7 +95,7 @@ public class Nodemon extends AppWidgetProvider {
             retudat = new JSONObject();
             try {
                 retudat.put("croommc","歇会吧");
-                retudat.put("jxbmc","歇会吧");
+                retudat.put("jxbmc","出去转转");
                 retudat.put("tmc","歇会吧");
             } catch (JSONException e) {
                 throw new RuntimeException(e);
@@ -125,9 +128,9 @@ public class Nodemon extends AppWidgetProvider {
             views.setTextViewText(R.id.Nextsection,retudat.get("jxbmc").toString());  // 课程
             views.setTextViewText(R.id.TeachersName,TeachersName); // 教师
             views.setTextViewText(R.id.TeachingClassroom,TeachingClassroom);  // 上课教室
-            views.setTextViewText(R.id.Weeks,"周数");  // 周数
+//            views.setTextViewText(R.id.Weeks,"周数");  // 周数
             views.setTextViewText(R.id.week,"周"+MgetDayOfWeek()); // 周几
-            views.setTextViewText(R.id.Abriefremark,getAbriefremark()); // 一言
+//            views.setTextViewText(R.id.Abriefremark,getAbriefremark()); // 一言
             appWidgetManager.updateAppWidget(appWidgetIds,views);   //
         } catch (JSONException e) {
             throw new RuntimeException(e);

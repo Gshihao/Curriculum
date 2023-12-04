@@ -2,6 +2,7 @@ package com.examdfple.mykcb;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -51,12 +52,13 @@ import okhttp3.Response;
 public class MainHome_My extends AppCompatActivity {
     public ImageView  darwimg;
     public SharedPreferences sharedPreferences;
-    private final String ASKKey = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhcHBJZCI6ODgzODczNzM2MjQ0Njc4NjU2LCJnZXRNYW5hZ2VtZW50SWQiOjcyNDU2MzA5MzU4Nzg0MTAyNCwiVElNRSI6MTY5OTg0MzUzMDU0Nn0.JgTbBUCkLwa7Iy5SD-7-me-buLgky92JNk0Bb_cwcPw";
+    private static final String ASKKey = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhcHBJZCI6ODgzODczNzM2MjQ0Njc4NjU2LCJnZXRNYW5hZ2VtZW50SWQiOjcyNDU2MzA5MzU4Nzg0MTAyNCwiVElNRSI6MTY5OTg0MzUzMDU0Nn0.JgTbBUCkLwa7Iy5SD-7-me-buLgky92JNk0Bb_cwcPw";
     public SharedPreferences.Editor editor;
     public GetWeeks Getweek= new GetWeeks();
     public String imgurl = "";
     public setFile setFiles = new setFile(MainHome_My.this);
     private final String DATNAME = "Datpack.json";
+    public static Context ddddd ;
     @Override
     @SuppressLint({"MissingInflatedId", "LocalSuppress", "WrongViewCast", "SetJavaScriptEnabled"})
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +72,9 @@ public class MainHome_My extends AppCompatActivity {
         sharedPreferences= getSharedPreferences("my_data", MODE_PRIVATE);
         editor= sharedPreferences.edit();
         WebView ww = findViewById(R.id.webview);
+
+        ddddd = MainHome_My.this;
+
 //        getSupportActionBar().setTitle("My Activity");
         ww.getSettings().setDomStorageEnabled(true);
         ww.getSettings().setJavaScriptEnabled(true);  //设置WebView属性,运行执行js脚本
@@ -92,7 +97,6 @@ public class MainHome_My extends AppCompatActivity {
 
             }
         }
-
         String username = sharedPreferences.getString("username","null");
         String password = sharedPreferences.getString("password","null");
         // 判断用户是否登录
@@ -213,7 +217,7 @@ public class MainHome_My extends AppCompatActivity {
         startActivity(new Intent(this, MainKcb.class));
     }
 
-    public void announcement() {
+    public static void announcement() {
         new Thread(() -> {
             OkHttpClient client = new OkHttpClient.Builder()
                     .connectTimeout(10, TimeUnit.SECONDS)  // 连接超时
@@ -238,7 +242,7 @@ public class MainHome_My extends AppCompatActivity {
                         // 在主线程上执行操作，例如显示AlertDialog
                         AlertDialog myerro = null;
                         try {
-                            myerro = new AlertDialog.Builder(MainHome_My.this)
+                            myerro = new AlertDialog.Builder(ddddd)
                                     .setTitle(jsda.get("head").toString())
                                     .setMessage("\n" + jsda.get("str") + "\n\n" + jsda.get("createdDate"))
                                     .setNegativeButton("知晓", new DialogInterface.OnClickListener() {
@@ -250,6 +254,8 @@ public class MainHome_My extends AppCompatActivity {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
+                        // 判断 公告是否读完一遍后就不显示
+//                        if (){}
                         myerro.show();
                     }
                 });

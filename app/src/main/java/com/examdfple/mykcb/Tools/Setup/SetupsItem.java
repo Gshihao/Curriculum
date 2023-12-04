@@ -3,7 +3,6 @@ package com.examdfple.mykcb.Tools.Setup;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -12,7 +11,6 @@ import android.widget.SeekBar;
 import com.examdfple.mykcb.R;
 import com.examdfple.mykcb.setFile;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 public class SetupsItem {
@@ -27,8 +25,9 @@ public class SetupsItem {
      * @param alert   弹唱对象
      * @param M_color 默认颜色值
      * @param jso
+     * @param v
      */
-    public boolean Modify_Color(AlertDialog.Builder alert, String M_color, JSONObject jso) {
+    public boolean Modify_Color(AlertDialog.Builder alert, String M_color, JSONObject jso, View v) {
         // 添加视图
         View vise = View.inflate(content,R.layout.setitems__color_selection,null);
         SeekBar SeekBar1s = vise.findViewById(R.id.seekBar);
@@ -43,7 +42,7 @@ public class SetupsItem {
         editText.setText(M_color);
         // 选择颜色值
         Setupitems_serves sers = new Setupitems_serves(content);
-        sers.Xuanseqi(SeekBar1s,SeekBar2s,SeekBar3s,SeekBar4s,lay1,M_color,edt);
+        sers.Xuanseqi(SeekBar1s,SeekBar2s,SeekBar3s,SeekBar4s,lay1,M_color,edt,v);
         alert.setTitle("修改标题颜色")
                 .setView(vise)
                 // .setView(editText)
@@ -56,10 +55,12 @@ public class SetupsItem {
                             setFile sdf = new setFile(content);
                             // 保存文件
                             sdf.write("Datpack.json",jso.toString());
-                        } catch (JSONException e) {
+                             // 重启后生效
+//                            announcement();
+//                            new Setup().SetSet_it();
+                        } catch (Exception e) {
                             throw new RuntimeException(e);
                         }
-                        Log.d("{}{}{}{}__", "onClick: "+jso);
                     }
                 })
                 .setNegativeButton("取消", new DialogInterface.OnClickListener() {
